@@ -4,10 +4,6 @@ import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@
 import { ChevronLeft, Clock, MapPin } from "lucide-react"
 import Link from "next/link"
 
-export function generateStaticParams() {
-  return [{ id: "test" }];
-}
-
 const eventDetails = {
   id: 1,
   name: "100m Dash - Boys",

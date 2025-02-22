@@ -13,6 +13,7 @@ import Link from "next/link"
 import { useAuth } from "@/components/auth-provider"
 import { cn } from "@/lib/utils"
 import { usePathname } from "next/navigation"
+import { ThemeToggle } from "@/components/theme-toggle"
 
 export function Header() {
   const { user, logout } = useAuth()
@@ -55,6 +56,7 @@ export function Header() {
           )}
         </div>
         <div className="ml-auto flex items-center space-x-4">
+          <ThemeToggle />
           {user ? (
             <DropdownMenu>
               <DropdownMenuTrigger asChild>
