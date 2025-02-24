@@ -5,7 +5,7 @@ import Link from "next/link"
 
 const events = [
   {
-    id: 1,
+    id: "1",
     name: "100m Dash - Boys",
     date: "2024-03-01",
     time: "10:00 AM",
@@ -13,7 +13,7 @@ const events = [
     participants: 12,
   },
   {
-    id: 2,
+    id: "2",
     name: "200m Sprint - Girls",
     date: "2024-03-01",
     time: "11:00 AM",
@@ -21,7 +21,7 @@ const events = [
     participants: 8,
   },
   {
-    id: 3,
+    id: "3",
     name: "4x100m Relay - Mixed",
     date: "2024-03-01",
     time: "2:00 PM",
