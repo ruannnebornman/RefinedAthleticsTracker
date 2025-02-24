@@ -3,6 +3,7 @@
 import type React from "react"
 
 import { createContext, useContext, useEffect, useState } from "react"
+import { useRouter, usePathname } from "next/navigation"
 
 type User = {
   id: string
@@ -15,6 +16,7 @@ type AuthContextType = {
   login: (email: string, password: string) => Promise<void>
   register: (email: string, password: string, name: string) => Promise<void>
   logout: () => void
+  isLoading: boolean
 }
 
 const AuthContext = createContext<AuthContextType>({
@@ -22,12 +24,16 @@ const AuthContext = createContext<AuthContextType>({
   login: async () => {},
   register: async () => {},
   logout: () => {},
+  isLoading: true,
 })
 
 const AUTH_STORAGE_KEY = "auth_user"
 
 export function AuthProvider({ children }: { children: React.ReactNode }) {
   const [user, setUser] = useState<User>(null)
+  const [isLoading, setIsLoading] = useState(true)
+  const router = useRouter()
+  const pathname = usePathname()
 
   useEffect(() => {
     // Check for existing session in localStorage
@@ -40,7 +46,22 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         localStorage.removeItem(AUTH_STORAGE_KEY)
       }
     }
+    setIsLoading(false)
   }, [])
+
+  // Handle auth-required routes
+  useEffect(() => {
+    if (!isLoading) {
+      const publicPaths = ["/login", "/register"]
+      const isPublicPath = publicPaths.includes(pathname)
+
+      if (!user && !isPublicPath) {
+        router.push("/login")
+      } else if (user && isPublicPath) {
+        router.push("/")
+      }
+    }
+  }, [user, isLoading, pathname, router])
 
   const login = async (email: string, password: string) => {
     // Mock login - in a real app, this would validate against your backend
@@ -71,9 +92,14 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   const logout = () => {
     setUser(null)
     localStorage.removeItem(AUTH_STORAGE_KEY)
+    router.push("/login")
   }
 
-  return <AuthContext.Provider value={{ user, login, register, logout }}>{children}</AuthContext.Provider>
+  return (
+    <AuthContext.Provider value={{ user, login, register, logout, isLoading }}>
+      {!isLoading && children}
+    </AuthContext.Provider>
+  )
 }
 
 export const useAuth = () => useContext(AuthContext)

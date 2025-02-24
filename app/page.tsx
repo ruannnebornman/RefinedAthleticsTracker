@@ -6,6 +6,9 @@ import Link from "next/link"
 import { EventList } from "@/components/event-list"
 import { ExcelUpload } from "@/components/excel-upload"
 
+// Mark page as static
+export const dynamic = "force-static"
+
 export default function DashboardPage() {
   return (
     <div className="flex-1 space-y-4 p-8 pt-6">
