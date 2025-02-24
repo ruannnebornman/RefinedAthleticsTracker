@@ -1,3 +1,4 @@
+import { Suspense } from "react"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { CalendarDays, MonitorIcon as Running, Users } from "lucide-react"
@@ -11,7 +12,9 @@ export default function DashboardPage() {
       <div className="flex items-center justify-between">
         <h2 className="text-3xl font-bold tracking-tight">Dashboard</h2>
         <div className="flex items-center space-x-4">
-          <ExcelUpload />
+          <Suspense fallback={null}>
+            <ExcelUpload />
+          </Suspense>
           <Link href="/events/new">
             <Button>
               <CalendarDays className="mr-2 h-4 w-4" />
@@ -64,7 +67,9 @@ export default function DashboardPage() {
             <Button variant="link">View all events</Button>
           </Link>
         </div>
-        <EventList />
+        <Suspense fallback={null}>
+          <EventList />
+        </Suspense>
       </div>
     </div>
   )

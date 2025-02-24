@@ -48,7 +48,8 @@ export function ExcelUpload() {
       clearInterval(progressInterval)
 
       if (!response.ok) {
-        throw new Error("Upload failed")
+        const error = await response.json()
+        throw new Error(error.error || "Upload failed")
       }
 
       const data = await response.json()
@@ -56,7 +57,7 @@ export function ExcelUpload() {
 
       toast({
         title: "Upload successful",
-        description: `${data.count} participants added successfully.`,
+        description: data.message || `${data.count} participants added successfully.`,
       })
     } catch (error) {
       toast({
@@ -66,7 +67,7 @@ export function ExcelUpload() {
       })
     } finally {
       setIsUploading(false)
-      setProgress(0)
+      setTimeout(() => setProgress(0), 1000) // Reset progress after animation
     }
   }
 
