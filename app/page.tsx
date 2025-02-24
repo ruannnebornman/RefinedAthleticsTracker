@@ -3,13 +3,15 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { CalendarDays, MonitorIcon as Running, Users } from "lucide-react"
 import Link from "next/link"
 import { EventList } from "@/components/event-list"
+import { ExcelUpload } from "@/components/excel-upload"
 
 export default function DashboardPage() {
   return (
     <div className="flex-1 space-y-4 p-8 pt-6">
       <div className="flex items-center justify-between">
         <h2 className="text-3xl font-bold tracking-tight">Dashboard</h2>
-        <div className="flex space-x-4">
+        <div className="flex items-center space-x-4">
+          <ExcelUpload />
           <Link href="/events/new">
             <Button>
               <CalendarDays className="mr-2 h-4 w-4" />
