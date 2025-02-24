@@ -4,6 +4,7 @@ import type React from "react"
 
 import { createContext, useContext, useEffect, useState } from "react"
 import { useRouter, usePathname } from "next/navigation"
+import { useToast } from "@/components/ui/use-toast"
 
 type User = {
   id: string
@@ -34,6 +35,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   const [isLoading, setIsLoading] = useState(true)
   const router = useRouter()
   const pathname = usePathname()
+  const { toast } = useToast()
 
   useEffect(() => {
     // Check for existing session in localStorage
@@ -64,42 +66,72 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   }, [user, isLoading, pathname, router])
 
   const login = async (email: string, password: string) => {
-    // Mock login - in a real app, this would validate against your backend
-    if (email === "test@example.com" && password === "password") {
-      const user = {
-        id: "1",
-        email,
-        name: "Test User",
+    try {
+      // Mock login - in a real app, this would validate against your backend
+      if (email === "test@example.com" && password === "password") {
+        const user = {
+          id: "1",
+          email,
+          name: "Test User",
+        }
+        setUser(user)
+        localStorage.setItem(AUTH_STORAGE_KEY, JSON.stringify(user))
+        toast({
+          title: "Welcome back!",
+          description: "You have successfully logged in.",
+        })
+      } else {
+        throw new Error("Invalid credentials")
       }
-      setUser(user)
-      localStorage.setItem(AUTH_STORAGE_KEY, JSON.stringify(user))
-    } else {
-      throw new Error("Invalid credentials")
+    } catch (error) {
+      toast({
+        variant: "destructive",
+        title: "Login failed",
+        description: error instanceof Error ? error.message : "An error occurred",
+      })
+      throw error
     }
   }
 
   const register = async (email: string, password: string, name: string) => {
-    // Mock registration - in a real app, this would create a user in your backend
-    const user = {
-      id: "1",
-      email,
-      name,
+    try {
+      // Mock registration - in a real app, this would create a user in your backend
+      const user = {
+        id: "1",
+        email,
+        name,
+      }
+      setUser(user)
+      localStorage.setItem(AUTH_STORAGE_KEY, JSON.stringify(user))
+      toast({
+        title: "Welcome!",
+        description: "Your account has been created successfully.",
+      })
+    } catch (error) {
+      toast({
+        variant: "destructive",
+        title: "Registration failed",
+        description: error instanceof Error ? error.message : "An error occurred",
+      })
+      throw error
     }
-    setUser(user)
-    localStorage.setItem(AUTH_STORAGE_KEY, JSON.stringify(user))
   }
 
   const logout = () => {
     setUser(null)
     localStorage.removeItem(AUTH_STORAGE_KEY)
     router.push("/login")
+    toast({
+      title: "Logged out",
+      description: "You have been successfully logged out.",
+    })
   }
 
-  return (
-    <AuthContext.Provider value={{ user, login, register, logout, isLoading }}>
-      {!isLoading && children}
-    </AuthContext.Provider>
-  )
+  if (isLoading) {
+    return null // or a loading spinner
+  }
+
+  return <AuthContext.Provider value={{ user, login, register, logout, isLoading }}>{children}</AuthContext.Provider>
 }
 
 export const useAuth = () => useContext(AuthContext)

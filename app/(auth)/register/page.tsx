@@ -15,16 +15,20 @@ export default function RegisterPage() {
   const [email, setEmail] = useState("")
   const [password, setPassword] = useState("")
   const [name, setName] = useState("")
+  const [isLoading, setIsLoading] = useState(false)
   const { register } = useAuth()
   const router = useRouter()
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
+    setIsLoading(true)
     try {
       await register(email, password, name)
       router.push("/")
     } catch (error) {
       console.error("Registration failed:", error)
+    } finally {
+      setIsLoading(false)
     }
   }
 
@@ -39,7 +43,14 @@ export default function RegisterPage() {
           <CardContent className="space-y-4">
             <div className="space-y-2">
               <Label htmlFor="name">Name</Label>
-              <Input id="name" placeholder="John Doe" value={name} onChange={(e) => setName(e.target.value)} required />
+              <Input
+                id="name"
+                placeholder="John Doe"
+                value={name}
+                onChange={(e) => setName(e.target.value)}
+                required
+                disabled={isLoading}
+              />
             </div>
             <div className="space-y-2">
               <Label htmlFor="email">Email</Label>
@@ -50,6 +61,7 @@ export default function RegisterPage() {
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
                 required
+                disabled={isLoading}
               />
             </div>
             <div className="space-y-2">
@@ -60,12 +72,13 @@ export default function RegisterPage() {
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
                 required
+                disabled={isLoading}
               />
             </div>
           </CardContent>
           <CardFooter className="flex flex-col space-y-4">
-            <Button className="w-full" type="submit">
-              Register
+            <Button className="w-full" type="submit" disabled={isLoading}>
+              {isLoading ? "Creating account..." : "Create account"}
             </Button>
             <div className="text-sm text-center text-muted-foreground">
               Already have an account?{" "}
